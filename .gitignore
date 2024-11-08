@@ -1,0 +1,7 @@
+credentials
+.venv/
+__pycache__/
+db.sqlite3
+.env
+cert*%
+.DS_Store
