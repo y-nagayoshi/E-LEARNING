@@ -1,6 +1,9 @@
 oci
 oracledb
 certifi
+boto3
+django-storages
+awscli
 
 asgiref==3.7.2
 Django~=5.0.4

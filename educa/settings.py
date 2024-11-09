@@ -1,26 +1,52 @@
 from pathlib import Path
 import oracledb
 from decouple import config
+import os
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
-
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-(=8y*4^!(z5*dv0b6bx0207vd*682t*b8*as#gjkjd)b5jmxus'
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+oracledb.init_oracle_client(lib_dir="/usr/local/oracle/instantclient_23_3")
 
 ALLOWED_HOSTS = []
+BASE_DIR = Path(__file__).resolve().parent.parent
+DEBUG = True
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+LANGUAGE_CODE = 'en-us'
+# MEDIA_URL = 'media/'
+# MEDIA_ROOT = BASE_DIR / 'media'
+ROOT_URLCONF = 'educa.urls'
+SECRET_KEY = 'django-insecure-(=8y*4^!(z5*dv0b6bx0207vd*682t*b8*as#gjkjd)b5jmxus'
+STATIC_URL = 'static/'
+TIME_ZONE = 'UTC'
+USE_I18N = True
+USE_TZ = True
+WSGI_APPLICATION = 'educa.wsgi.application'
 
 
-# Application definition
+ORACLE_BUCKET_NAME = os.environ.get('ORACLE_BUCKET_NAME')
+ORACLE_BUCKET_NAMESPACE = os.environ.get('ORACLE_BUCKET_NAMESPACE')
+ORACLE_REGION = os.environ.get('ORACLE_REGION')
+
+AWS_ACCESS_KEY_ID = os.environ.get('ORACLE_ACCESS_KEY')
+AWS_SECRET_ACCESS_KEY = os.environ.get('ORACLE_CUSTOMER_SECRET_KEY')
+AWS_STORAGE_BUCKET_NAME = ORACLE_BUCKET_NAME
+AWS_S3_CUSTOM_DOMAIN = f"{ORACLE_BUCKET_NAMESPACE}.compat.objectstorage.{ORACLE_REGION}.oraclecloud.com"
+AWS_S3_ENDPOINT_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}"
+AWS_S3_OBJECT_PARAMETERS = {
+    'CacheControl': 'max-age=86400',
+}
+
+DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
+MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/{ORACLE_BUCKET_NAME}/"
+
+
+# STATICFILES_STORAGE = 'core.storage_backends.StaticStorage'
+# STATICFILES_DIRS = [
+#     os.path.join(BASE_DIR, 'upload/static'),
+# ]
+# STATIC_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/{ORACLE_BUCKET_NAME}/static"
+
 
 INSTALLED_APPS = [
+    'courses.apps.CoursesConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -39,8 +65,6 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'educa.urls'
-
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -57,10 +81,6 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'educa.wsgi.application'
-
-
-oracledb.init_oracle_client(lib_dir="/usr/local/oracle/instantclient_23_3")
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.oracle',
@@ -69,10 +89,6 @@ DATABASES = {
         'PASSWORD': config('DB_PASSWORD'),
     }
 }
-
-
-# Password validation
-# https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -88,26 +104,3 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
-
-
-# Internationalization
-# https://docs.djangoproject.com/en/5.0/topics/i18n/
-
-LANGUAGE_CODE = 'en-us'
-
-TIME_ZONE = 'UTC'
-
-USE_I18N = True
-
-USE_TZ = True
-
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/5.0/howto/static-files/
-
-STATIC_URL = 'static/'
-
-# Default primary key field type
-# https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
-
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
