@@ -10,3 +10,4 @@ Django
 sqlparse
 Pillow
 python-decouple
+django-braces
